@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using System.IO.Compression;
 
 namespace LiveSwitch.TextControl
 {
@@ -8,11 +9,14 @@ namespace LiveSwitch.TextControl
     {
         private string _filename = null;
         private static int id_inc = 0;
+        private readonly string dir = "Project/Resources";
 
         public EditorForm()
         {
             InitializeComponent();
             editor.Tick += new Editor.TickDelegate(editor_Tick);
+            if (Directory.Exists(dir))
+                Directory.Delete(dir, true);
         }
 
         private void editor_Tick()
@@ -39,40 +43,50 @@ namespace LiveSwitch.TextControl
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_filename == null)
-            {
-                if (!SaveFileDialog())
-                    return;
-            }
-            SaveFile(_filename);
-        }
-
-        private bool SaveFileDialog()
-        {
+            SaveFile();
             using (SaveFileDialog dlg = new SaveFileDialog())
             {
-                dlg.AddExtension = true;
-                dlg.DefaultExt = "htm";
-                dlg.Filter = "HTML files (*.html;*.htm)|*.html;*.htm";
-                DialogResult res = dlg.ShowDialog(this);
-                if (res == DialogResult.OK)
-                {
-                    _filename = dlg.FileName;
-                    return true;
-                }
-                else
-                    return false;
+                dlg.DefaultExt = ".zip";
+                dlg.FileName = "project.zip";
+                dlg.Filter = "Zip file (*.zip)|*.zip";
+                if (dlg.ShowDialog() == DialogResult.OK)
+                    File.Copy("Project.zip", dlg.FileName, true);
             }
+            MessageBox.Show("Thông báo", "Lưu thành công");
         }
 
-        private void SaveFile(string filename)
+        private void SaveFile()
         {
-            using (StreamWriter writer = File.CreateText(filename))
+            using (StreamWriter writer = File.CreateText("Project/index.html"))
             {
                 writer.Write(editor.DocumentText);
                 writer.Flush();
                 writer.Close();
             }
+
+            string config = "";
+            using (StreamReader cfg = new StreamReader("Project/imsmanifestSample.xml"))
+            {
+                config = cfg.ReadToEnd();
+            }
+
+            using (StreamWriter cfg = new StreamWriter("Project/imsmanifest.xml"))
+            {
+                string t = "";
+                if (!Directory.Exists("Project/Resources"))
+                    return;
+                DirectoryInfo dir = new DirectoryInfo(this.dir);
+                foreach (FileInfo file in dir.GetFiles())
+                {
+                    t += @"<file href='Resources/" + file.Name + "'/>";
+                }
+                config = config.Replace("@files", t);
+                cfg.Write(config);
+            }
+
+            if (File.Exists("Project.zip"))
+                File.Delete("Project.zip");
+            ZipFile.CreateFromDirectory("Project", "Project.zip");
         }
 
         private void LoadFile(string filename)
@@ -98,12 +112,6 @@ namespace LiveSwitch.TextControl
                     return;
             }
             LoadFile(_filename);
-        }
-
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (SaveFileDialog())
-                SaveFile(_filename);
         }
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
@@ -172,13 +180,6 @@ namespace LiveSwitch.TextControl
                 if (form.Accepted)
                 {
                     editor.BodyHtml = form.HTML;
-                    /*string html = "<!DOCTYPE HTML PUBLIC ' -//W3C//DTD HTML 4.0 Transitional//EN'>";
-                    html += "<html><head>";
-                    html += "<meta content='IE=Edge' http-equiv='X-UA-Compatible'/></head><body>";
-                    html += form.HTML; // "<iframe id='video' src='\Video\test.mp4' width='420' height='250' frameborder='0' allowfullscreen></iframe>";
-                    html += "</body></html>";
-                    editor.DocumentText = html;*/
-
                 }
             }
         }
@@ -216,24 +217,24 @@ namespace LiveSwitch.TextControl
             dialog.Filter = filter;
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                if (!Directory.Exists(fileFormat))
-                    Directory.CreateDirectory(fileFormat);
-                string name = fileFormat + "/" + fileFormat + (new DirectoryInfo(fileFormat).GetFiles().Length + 1) + dialog.FileName.Substring(dialog.FileName.LastIndexOf('.'));
-                File.Copy(dialog.FileName, name);
-                editor.BodyHtml += "<iframe style='border: solid red 3px' id='" + name.Substring(name.LastIndexOf('/') + 1) + "' src='" + name + "' width='420' height='250' frameborder='0' allowfullscreen> </iframe>";
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+                string name = "Resources/" + fileFormat + (new DirectoryInfo(dir).GetFiles().Length + 1) + dialog.FileName.Substring(dialog.FileName.LastIndexOf('.'));
+                File.Copy(dialog.FileName, "Project/" + name);
+                editor.BodyHtml += "<iframe style='border: solid red 3px;' src='" + name + "' width='420' height='250' frameborder='0' allowfullscreen> </iframe>";
             }
         }
 
         private void EditorForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!string.IsNullOrEmpty(editor.BodyText) || !string.IsNullOrEmpty(editor.BodyHtml))
-            {
-                DialogResult result = MessageBox.Show("Thông báo", "Tệp chưa được lưu. Lưu ngay?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                if (result == DialogResult.Yes)
-                    saveToolStripMenuItem_Click(this, EventArgs.Empty);
-                else if (result == DialogResult.Cancel)
-                    e.Cancel = true;
-            }
+            //if (!string.IsNullOrEmpty(editor.BodyText) || !string.IsNullOrEmpty(editor.BodyHtml))
+            //{
+            //    DialogResult result = MessageBox.Show("Thông báo", "Tệp chưa được lưu. Lưu ngay?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+            //    if (result == DialogResult.Yes)
+            //        saveToolStripMenuItem_Click(this, EventArgs.Empty);
+            //    else if (result == DialogResult.Cancel)
+            //        e.Cancel = true;
+            //}
         }
 
         private void questionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -242,7 +243,7 @@ namespace LiveSwitch.TextControl
             dialog.Multiselect = false;
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                editor.BodyHtml += GenarateQuestionSet(dialog.FileName);
+                editor.DocumentText += GenarateQuestionSet(dialog.FileName);
             }
         }
 
@@ -251,8 +252,9 @@ namespace LiveSwitch.TextControl
             try
             {
                 id_inc++;
+                string input = "";
                 StreamReader streamReader = new StreamReader(path);
-                string input = "var test" + id_inc + " = new Test(new Array());";
+                input += "var test" + id_inc + " = new Test(new Array());";
                 int q_id = 0;
                 while (!streamReader.EndOfStream)
                 {
@@ -264,9 +266,10 @@ namespace LiveSwitch.TextControl
                     q_id++;
                 }
                 streamReader.Close();
-                return @"<script type='text/javascript'>" + input + @" RenderTest(test" + id_inc + ", 'test" + id_inc + "'); </script>";
+                string a = @"<script type='text/javascript'>" + input + @" RenderTest(test" + id_inc + ", 'test" + id_inc + "'); </script>";
+                return a;
             }
-            catch
+            catch (Exception ex)
             {
                 MessageBox.Show("Thông báo", "File không đúng định dạng", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return "";
@@ -275,7 +278,9 @@ namespace LiveSwitch.TextControl
 
         private void previewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new PreviewForm(editor.DocumentText).Show();
+            //new PreviewForm(editor.DocumentText).Show();
+
+            //new PreviewForm("<script>document.write(document.documentURI);</script>").Show();
         }
     }
 }
