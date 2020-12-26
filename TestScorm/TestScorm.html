@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        let ls = window.localStorage;
+        let value = ls.getItem('p');
+        if(!value){
+            value = "This is the default state"
+        }
+        window.onload = function (){
+            document.getElementById("p-tag").innerHTML = value;
+        }
+        function changeDefault(){
+            document.getElementById("p-tag").innerHTML = 'abc';
+            ls.setItem('p', 'abc')
+            document.getElementById("p-tag-1").innerHTML = 'XYZ';
+        }
+    </script>
+</head>
+<body>
+    This is a test page
+    <p id="p-tag">
+        This is the default state
+    </p>
+    <p id= "p-tag-1">
+        ABCDEF
+    </p>
+    <button onclick="changeDefault()">
+        Click me!
+    </button>
+</body>
+</html>
