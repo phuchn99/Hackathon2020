@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using TATeam.Services.Models;
 
 namespace TATeam.Code.Models
@@ -30,7 +29,7 @@ namespace TATeam.Code.Models
             pnl.Controls.Add(player);
             player.Margin = new Padding(250, 3, 3, 3);
             ((System.ComponentModel.ISupportInitialize)(player)).EndInit();
-           
+
             player.URL = Url;
             return pnl;
         }

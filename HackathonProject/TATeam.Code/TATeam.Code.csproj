@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\IActivity.cs" />
+    <Compile Include="Models\QuizActivity.cs" />
     <Compile Include="Models\VideoActivity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

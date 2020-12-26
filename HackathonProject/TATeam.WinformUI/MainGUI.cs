@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TATeam.WinformUI
@@ -21,8 +14,13 @@ namespace TATeam.WinformUI
         {
             NewActivity newActivity = new NewActivity();
             newActivity.VideoSubmited += NewActivity_VideoSubmited;
+            newActivity.QuizSubmited += NewActivity_QuizSubmited;
             newActivity.ShowDialog();
-            
+        }
+
+        private void NewActivity_QuizSubmited(object sender, QuizSumitedEventArgs e)
+        {
+            pnlContent.Controls.Add(e.Quiz.Render(pnlContent.Width));
         }
 
         private void NewActivity_VideoSubmited(object sender, VideoSumitedEventArgs e)
