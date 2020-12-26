@@ -172,6 +172,13 @@ namespace LiveSwitch.TextControl
                 if (form.Accepted)
                 {
                     editor.BodyHtml = form.HTML;
+                    /*string html = "<!DOCTYPE HTML PUBLIC ' -//W3C//DTD HTML 4.0 Transitional//EN'>";
+                    html += "<html><head>";
+                    html += "<meta content='IE=Edge' http-equiv='X-UA-Compatible'/></head><body>";
+                    html += form.HTML; // "<iframe id='video' src='\Video\test.mp4' width='420' height='250' frameborder='0' allowfullscreen></iframe>";
+                    html += "</body></html>";
+                    editor.DocumentText = html;*/
+
                 }
             }
         }

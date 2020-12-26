@@ -4,8 +4,6 @@ namespace LiveSwitch.TextControl
 {
     public partial class PreviewForm : Form
     {
-
-
         public PreviewForm(string html)
         {
             InitializeComponent();
