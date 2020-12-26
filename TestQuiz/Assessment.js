@@ -20,9 +20,6 @@ Test.prototype.AddQuestion = function(question)
     this.Questions[this.Questions.length] = question;
 }
 
-var test = new Test(new Array());
-
-
 function CheckNumeric(obj){
     var userText = new String(obj.value);
     var numbersRegEx = /[^0-9]/g;
@@ -31,7 +28,7 @@ function CheckNumeric(obj){
         obj.value = userText.replace(numbersRegEx, "");
     }
 }
-function SubmitAnswers(){
+function SubmitAnswers(test){
     var correctCount = 0;
     var totalQuestions = test.Questions.length;
     
@@ -119,7 +116,7 @@ function SubmitAnswers(){
     }
 }
     
-function RenderTest(test){
+function RenderTest(test, test_id){
     
     document.write ("<div id='test'><form id='frmTest' action='#'>");
     
@@ -163,7 +160,8 @@ function RenderTest(test){
         }
         document.write ("</div>");      //close out question div
     }
-    document.write("<input type='button' value='Submit Answers' onclick='SubmitAnswers();' />");
+    document.write("<input type='button' value='Submit Answers' onclick='SubmitAnswers(");
+    document.write(test_id+")' />");
     document.write ("</form></div>");      //close out test div
 }
 
