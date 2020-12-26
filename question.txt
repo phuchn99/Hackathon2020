@@ -1,0 +1,20 @@
+Câu hỏi 1:
+QUESTION_TYPE_CHOICE
+Hai|Ba|Bốn
+Hai
+Câu hỏi 2:
+QUESTION_TYPE_CHOICE
+Hai|Ba|Bốn
+Hai
+Câu hỏi 3:
+QUESTION_TYPE_CHOICE
+Hai|Ba|Bốn
+Hai
+Câu hỏi 4:
+QUESTION_TYPE_CHOICE
+Hai|Ba|Bốn
+Hai
+Câu hỏi 5:
+QUESTION_TYPE_CHOICE
+Hai|Ba|Bốn
+Hai
