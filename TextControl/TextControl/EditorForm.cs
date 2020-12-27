@@ -64,6 +64,22 @@ namespace LiveSwitch.TextControl
                 writer.Close();
             }
 
+            string tmp = "";
+            using (StreamReader cfg = new StreamReader("Project/index.html"))
+            {
+                tmp = cfg.ReadToEnd();
+                tmp = tmp.Replace("<HEAD>", @"<HEAD><script type='text/javascript' src='QuestionTemplate/contentfunctions.js'></script>
+                        <script type = 'text/javascript' src = 'QuestionTemplate/scormfunctions.js'></script>
+                           <script type = 'text/javascript' src = 'QuestionTemplate/Assessment.js'></script>");
+            }
+
+            using (StreamWriter writer = File.CreateText("Project/index.html"))
+            {
+                writer.Write(tmp);
+                writer.Flush();
+                writer.Close();
+            }
+
             string config = "";
             using (StreamReader cfg = new StreamReader("Project/imsmanifestSample.xml"))
             {
@@ -73,12 +89,13 @@ namespace LiveSwitch.TextControl
             using (StreamWriter cfg = new StreamWriter("Project/imsmanifest.xml"))
             {
                 string t = "";
-                if (!Directory.Exists("Project/Resources"))
-                    return;
-                DirectoryInfo dir = new DirectoryInfo(this.dir);
-                foreach (FileInfo file in dir.GetFiles())
+                if (Directory.Exists("Project/Resources"))
                 {
-                    t += @"<file href='Resources/" + file.Name + "'/>";
+                    DirectoryInfo dir = new DirectoryInfo(this.dir);
+                    foreach (FileInfo file in dir.GetFiles())
+                    {
+                        t += @"<file href='Resources/" + file.Name + "'/>";
+                    }
                 }
                 config = config.Replace("@files", t);
                 cfg.Write(config);
@@ -203,6 +220,7 @@ namespace LiveSwitch.TextControl
         private void videoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             InsertIframe("Video", "Video file (*.mp4, *.avi, *.amv, *.3gp, *.m4v, *.mov)|*.mp4;*.avi;*.amv;*.3gp;*.m4v;*.mov");
+
         }
 
         private void pptToolStripMenuItem_Click(object sender, EventArgs e)
@@ -243,7 +261,7 @@ namespace LiveSwitch.TextControl
             dialog.Multiselect = false;
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                editor.DocumentText += GenarateQuestionSet(dialog.FileName);
+                editor.BodyHtml += GenarateQuestionSet(dialog.FileName);
             }
         }
 

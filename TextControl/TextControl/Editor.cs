@@ -53,6 +53,7 @@ namespace LiveSwitch.TextControl
             SetupBrowser();
             SetupFontComboBox();
             SetupFontSizeComboBox();
+            
             boldButton.CheckedChanged += delegate
             {
                 if (BoldChanged != null)
@@ -178,14 +179,19 @@ namespace LiveSwitch.TextControl
         /// </summary>
         private void SetupBrowser()
         {
-            webBrowser1.DocumentText = @"<html><head>
-	                    <script type='text/javascript' src='QuestionTemplate/contentfunctions.js'></script>
-	                    <script type='text/javascript' src='QuestionTemplate/scormfunctions.js'></script>
-	                    <script type='text/javascript' src='QuestionTemplate/Assessment.js'></script>
-                        </head><body></body></html>";
+            webBrowser1.DocumentText = @"<html><head></head><body></body></html>";
             doc = webBrowser1.Document.DomDocument as IHTMLDocument2;
             doc.designMode = "On";
             webBrowser1.Document.ContextMenuShowing += new HtmlElementEventHandler(Document_ContextMenuShowing);
+            webBrowser1.DocumentCompleted += WebBrowser1_DocumentCompleted;
+        }
+
+        private void WebBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            throw new NotImplementedException();
+            //webBrowser1.DocumentText = @"<html><head><script type='text/javascript' src='QuestionTemplate/contentfunctions.js'></script>
+                        //<script type = 'text/javascript' src = 'QuestionTemplate/scormfunctions.js'></script>
+                        //   <script type = 'text/javascript' src = 'QuestionTemplate/Assessment.js'></script></head><body></body></html>";
         }
 
         /// <summary>
@@ -269,7 +275,11 @@ namespace LiveSwitch.TextControl
             set
             {
                 if (value == null)
-                    webBrowser1.Document.Write(@"<html><body></body></html>");
+                    webBrowser1.Document.Write(@"<html><head>
+	                    <script type='text/javascript' src='QuestionTemplate/contentfunctions.js'></script>
+	                    <script type='text/javascript' src='QuestionTemplate/scormfunctions.js'></script>
+	                    <script type='text/javascript' src='QuestionTemplate/Assessment.js'></script>
+                        </head><body></body></html>");
                 else
                     webBrowser1.Document.Write(value);
                 //                webBrowser1.DocumentText = value;
